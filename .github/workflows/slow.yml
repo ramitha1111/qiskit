@@ -8,12 +8,20 @@ jobs:
     if: github.repository_owner == 'Qiskit'
     name: Full-test-run-with-slow
     runs-on: ubuntu-latest
+    timeout-minutes: 60
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-python@v7
         name: Install Python
         with:
           python-version: '3.11'
+      - name: Cache pip dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('constraints.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
       - name: Install Rust
         run: rustup toolchain install --profile minimal --no-self-update
       - name: Install dependencies
